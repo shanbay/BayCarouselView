@@ -58,14 +58,8 @@
 		71684FA61D86B51C00A1F9F8 /* BayCarouselView */ = {
 			isa = PBXGroup;
 			children = (
-				71684FAA1D86B51C00A1F9F8 /* AppDelegate.h */,
-				71684FAB1D86B51C00A1F9F8 /* AppDelegate.m */,
 				71684FAD1D86B51C00A1F9F8 /* ViewController.h */,
 				71684FAE1D86B51C00A1F9F8 /* ViewController.m */,
-				71684FB01D86B51C00A1F9F8 /* Main.storyboard */,
-				71684FB31D86B51C00A1F9F8 /* Assets.xcassets */,
-				71684FB51D86B51C00A1F9F8 /* LaunchScreen.storyboard */,
-				71684FB81D86B51C00A1F9F8 /* Info.plist */,
 				71684FA71D86B51C00A1F9F8 /* Supporting Files */,
 			);
 			path = BayCarouselView;
@@ -74,6 +68,12 @@
 		71684FA71D86B51C00A1F9F8 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				71684FAA1D86B51C00A1F9F8 /* AppDelegate.h */,
+				71684FAB1D86B51C00A1F9F8 /* AppDelegate.m */,
+				71684FB01D86B51C00A1F9F8 /* Main.storyboard */,
+				71684FB51D86B51C00A1F9F8 /* LaunchScreen.storyboard */,
+				71684FB81D86B51C00A1F9F8 /* Info.plist */,
+				71684FB31D86B51C00A1F9F8 /* Assets.xcassets */,
 				71684FA81D86B51C00A1F9F8 /* main.m */,
 			);
 			name = "Supporting Files";
