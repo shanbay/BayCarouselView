@@ -13,6 +13,9 @@
 		71684FB21D86B51C00A1F9F8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71684FB01D86B51C00A1F9F8 /* Main.storyboard */; };
 		71684FB41D86B51C00A1F9F8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 71684FB31D86B51C00A1F9F8 /* Assets.xcassets */; };
 		71684FB71D86B51C00A1F9F8 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71684FB51D86B51C00A1F9F8 /* LaunchScreen.storyboard */; };
+		71684FC31D86B5E200A1F9F8 /* BayCarouselItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 71684FC01D86B5E200A1F9F8 /* BayCarouselItemView.m */; };
+		71684FC41D86B5E200A1F9F8 /* BayCarouselView.m in Sources */ = {isa = PBXBuildFile; fileRef = 71684FC21D86B5E200A1F9F8 /* BayCarouselView.m */; };
+		71684FC71D86B5EB00A1F9F8 /* BayCarouselTestItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 71684FC61D86B5EB00A1F9F8 /* BayCarouselTestItemView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,12 @@
 		71684FB31D86B51C00A1F9F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		71684FB61D86B51C00A1F9F8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		71684FB81D86B51C00A1F9F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		71684FBF1D86B5E200A1F9F8 /* BayCarouselItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BayCarouselItemView.h; sourceTree = "<group>"; };
+		71684FC01D86B5E200A1F9F8 /* BayCarouselItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BayCarouselItemView.m; sourceTree = "<group>"; };
+		71684FC11D86B5E200A1F9F8 /* BayCarouselView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BayCarouselView.h; sourceTree = "<group>"; };
+		71684FC21D86B5E200A1F9F8 /* BayCarouselView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BayCarouselView.m; sourceTree = "<group>"; };
+		71684FC51D86B5EB00A1F9F8 /* BayCarouselTestItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BayCarouselTestItemView.h; sourceTree = "<group>"; };
+		71684FC61D86B5EB00A1F9F8 /* BayCarouselTestItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BayCarouselTestItemView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,8 +67,11 @@
 		71684FA61D86B51C00A1F9F8 /* BayCarouselView */ = {
 			isa = PBXGroup;
 			children = (
+				71684FBE1D86B5E200A1F9F8 /* BayCarouselView */,
 				71684FAD1D86B51C00A1F9F8 /* ViewController.h */,
 				71684FAE1D86B51C00A1F9F8 /* ViewController.m */,
+				71684FC51D86B5EB00A1F9F8 /* BayCarouselTestItemView.h */,
+				71684FC61D86B5EB00A1F9F8 /* BayCarouselTestItemView.m */,
 				71684FA71D86B51C00A1F9F8 /* Supporting Files */,
 			);
 			path = BayCarouselView;
@@ -77,6 +89,17 @@
 				71684FA81D86B51C00A1F9F8 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		71684FBE1D86B5E200A1F9F8 /* BayCarouselView */ = {
+			isa = PBXGroup;
+			children = (
+				71684FBF1D86B5E200A1F9F8 /* BayCarouselItemView.h */,
+				71684FC01D86B5E200A1F9F8 /* BayCarouselItemView.m */,
+				71684FC11D86B5E200A1F9F8 /* BayCarouselView.h */,
+				71684FC21D86B5E200A1F9F8 /* BayCarouselView.m */,
+			);
+			path = BayCarouselView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -149,9 +172,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				71684FC31D86B5E200A1F9F8 /* BayCarouselItemView.m in Sources */,
 				71684FAF1D86B51C00A1F9F8 /* ViewController.m in Sources */,
 				71684FAC1D86B51C00A1F9F8 /* AppDelegate.m in Sources */,
 				71684FA91D86B51C00A1F9F8 /* main.m in Sources */,
+				71684FC71D86B5EB00A1F9F8 /* BayCarouselTestItemView.m in Sources */,
+				71684FC41D86B5E200A1F9F8 /* BayCarouselView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
