@@ -31,7 +31,6 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         [self commonInit];
         [self addSubview:self.scrollView];
         self.rowWidth = 320;
-        self.currentIndex = 0;
     }
     return self;
 }
@@ -39,6 +38,34 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 - (void)commonInit {
     self.reusableViewPool = [NSMutableSet set];
     self.numberOfRows = 0;
+    for (BayCarouselItemView *view in self.scrollView.subviews) {
+        [view removeFromSuperview];
+    }
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.scrollView.frame = self.bounds;
+    
+    CGRect frame = self.scrollView.frame;
+    frame.size.width = self.rowWidth;
+    self.scrollView.frame = frame;
+    
+    CGPoint center = self.scrollView.center;
+    center.x = self.center.x;
+    self.scrollView.center = center;
+    
+    for (BayCarouselItemView *view in self.scrollView.subviews) {
+        if (view.itemIndex != self.currentIndex) {
+            CGRect frame = view.frame;
+            frame.size.height = self.defaultItemHeight * 0.8;
+            view.frame = frame;
+        }
+        CGPoint center = view.center;
+        center.x = (view.itemIndex + 0.5) * self.rowWidth;
+        center.y = self.center.y;
+        view.center = center;
+    }
 }
 
 #pragma mark - scrollView delegate
@@ -55,7 +82,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
             if (CGRectGetMaxX(view.frame) < scrollView.contentOffset.x - padding || CGRectGetMinX(view.frame) > scrollView.contentOffset.x + scrollView.frame.size.width + padding) {
                 [self queueReusableView:view];
 #ifdef DEBUG
-                NSLog(@"remove %ld", view.itemIndex);
+                //                NSLog(@"remove %ld", view.itemIndex);
 #endif
                 [view removeFromSuperview];
                 if ([self.delegate respondsToSelector:@selector(carouselView:didEndDisplayView:forRowAtIndex:)]) {
@@ -100,26 +127,26 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         }
     }
     
-
+    
     if (lastView && CGRectGetMaxX(lastView.frame) < maxX && !self.isRightItemLoaded) {
         
+        self.currentIndex = lastView.itemIndex;
+        self.rightItemLoaded = YES;
+        self.leftItemLoaded = NO;
         if (lastView.itemIndex + 1 < self.numberOfRows) {
-            self.currentIndex = lastView.itemIndex;
             BayCarouselItemView *view = [self generateViewWithIndex:lastView.itemIndex + 1];
             [self.scrollView addSubview:view];
-            self.rightItemLoaded = YES;
-            self.leftItemLoaded = NO;
         }
     }
     
     if (firstView && CGRectGetMinX(firstView.frame) > minX && !self.isLeftItemLoaded) {
         
+        self.currentIndex = firstView.itemIndex;
+        self.leftItemLoaded = YES;
+        self.rightItemLoaded = NO;
         if (firstView.itemIndex > 0) {
-            self.currentIndex = firstView.itemIndex;
             BayCarouselItemView *view = [self generateViewWithIndex:firstView.itemIndex - 1];
             [self.scrollView addSubview:view];
-            self.leftItemLoaded = YES;
-            self.rightItemLoaded = NO;
         }
     }
     
@@ -132,9 +159,15 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 }
 
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-
+    
     self.leftItemLoaded = NO;
     self.rightItemLoaded = NO;
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if ([self.delegate respondsToSelector:@selector(carouselView:currentIndex:)]) {
+        [self.delegate carouselView:self currentIndex:self.currentIndex];
+    }
 }
 
 #pragma mark - private
@@ -145,7 +178,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 
 - (BayCarouselItemView *)generateViewWithIndex:(NSInteger)index {
 #ifdef DEBUG
-    NSLog(@"generateViewWithIndex %ld", index);
+    //    NSLog(@"generateViewWithIndex %ld", index);
 #endif
     BayCarouselItemView *view = [self.dataSource carouselView:self viewForRowAtIndex:index];
     view.itemIndex = index;
@@ -195,14 +228,10 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
     
     self.scrollView.contentSize = CGSizeMake(self.rowWidth * self.numberOfRows, self.frame.size.height);
     
-    for (NSInteger i = 0; i < self.numberOfRows; i++) {
-        BayCarouselItemView *view = [self generateViewWithIndex:i];
-        [self.scrollView addSubview:view];
-        
-        if (CGRectGetMaxX(view.frame) > self.frame.size.width) {
-            break;
-        }
-    }
+    self.currentIndex = 0;
+    BayCarouselItemView *view = [self generateViewWithIndex:0];
+    [self.scrollView addSubview:view];
+    [self scrollViewDidScroll:self.scrollView];
 }
 
 - (void)scrollToIndex:(NSInteger)index animate:(BOOL)animate {
@@ -232,12 +261,12 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 - (void)setRowWidth:(float)rowWidth {
     _rowWidth = rowWidth;
     CGRect frame = self.scrollView.frame;
-    frame.size.width = rowWidth;
-    self.scrollView.frame = frame;
-    
     CGPoint center = self.scrollView.center;
     center.x = self.center.x;
     self.scrollView.center = center;
+    frame.size.width = rowWidth;
+    self.scrollView.frame = frame;
+    
     [self reloadData];
 }
 
@@ -255,7 +284,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 
 - (UIScrollView *)scrollView {
     if (!_scrollView) {
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.frame];
+        _scrollView = [[UIScrollView alloc] init];
         _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _scrollView.delegate = self;
         _scrollView.showsVerticalScrollIndicator = NO;

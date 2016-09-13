@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)carouselView:(BayCarouselView *)carouselView didSelectRowAtIndex:(NSInteger)index;
 - (void)carouselView:(BayCarouselView *)carouselView didDeSelectRowAtIndex:(NSInteger)index;
 
+- (void)carouselView:(BayCarouselView *)carouselView currentIndex:(NSInteger)index;
+
 @end
 
 @protocol BayCarouselViewDataSource <NSObject>
