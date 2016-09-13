@@ -18,6 +18,8 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 @property (nonatomic, strong) NSMutableArray *reusableViewArray;
 @property (nonatomic, strong) NSMutableSet *reusableViewPool;
 @property (nonatomic, strong) Class registerClass;
+@property (nonatomic, assign, getter=isLeftItemLoaded) BOOL leftItemLoaded;
+@property (nonatomic, assign, getter=isRightItemLoaded) BOOL rightItemLoaded;
 @end
 
 @implementation BayCarouselView
@@ -42,10 +44,18 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
+    float padding = (self.frame.size.width - self.rowWidth) / 2;
+    
+    float maxX = scrollView.contentOffset.x + self.scrollView.frame.size.width;
+    float minX = scrollView.contentOffset.x;
+    
     for (BayCarouselItemView *view in scrollView.subviews) {
         if ([view isKindOfClass:self.registerClass]) {
-            if (CGRectGetMaxX(view.frame) < scrollView.contentOffset.x || CGRectGetMinX(view.frame) > scrollView.contentOffset.x + scrollView.frame.size.width) {
+            if (CGRectGetMaxX(view.frame) < scrollView.contentOffset.x - padding || CGRectGetMinX(view.frame) > scrollView.contentOffset.x + scrollView.frame.size.width + padding) {
                 [self queueReusableView:view];
+#ifdef DEBUG
+                NSLog(@"remove %ld", view.itemIndex);
+#endif
                 [view removeFromSuperview];
                 if ([self.delegate respondsToSelector:@selector(carouselView:didEndDisplayView:forRowAtIndex:)]) {
                     [self.delegate carouselView:self didEndDisplayView:view forRowAtIndex:view.itemIndex];
@@ -54,8 +64,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         }
     }
     
-    float maxX = scrollView.contentOffset.x + self.scrollView.frame.size.width;
-    float minX = scrollView.contentOffset.x;
+    
     
     NSArray *subviewsArray = [self.scrollView.subviews sortedArrayUsingComparator:^NSComparisonResult(BayCarouselItemView *obj1, BayCarouselItemView *obj2) {
         
@@ -77,21 +86,29 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         }
     }
 
-    if (CGRectGetMaxX(lastView.frame) <= maxX) {
+    if (CGRectGetMaxX(lastView.frame) < maxX && !self.isRightItemLoaded) {
         if (lastView.itemIndex + 1 < self.numberOfRows) {
             BayCarouselItemView *view = [self generateViewWithIndex:lastView.itemIndex + 1];
             [self.scrollView addSubview:view];
             lastView = view;
+            self.rightItemLoaded = YES;
         }
     }
     
-    if (CGRectGetMinX(firstView.frame) > minX) {
+    if (CGRectGetMinX(firstView.frame) > minX && !self.isLeftItemLoaded) {
         if (firstView.itemIndex > 0) {
             BayCarouselItemView *view = [self generateViewWithIndex:firstView.itemIndex - 1];
             [self.scrollView addSubview:view];
             firstView = view;
+            self.leftItemLoaded = YES;
         }
     }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+
+    self.leftItemLoaded = NO;
+    self.rightItemLoaded = NO;
 }
 
 #pragma mark - private
@@ -101,7 +118,9 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 }
 
 - (BayCarouselItemView *)generateViewWithIndex:(NSInteger)index {
-    
+#ifdef DEBUG
+    NSLog(@"generateViewWithIndex %ld", index);
+#endif
     BayCarouselItemView *view = [self.dataSource carouselView:self viewForRowAtIndex:index];
     view.itemIndex = index;
     CGRect frame = view.frame;
@@ -193,6 +212,17 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
     CGPoint center = self.scrollView.center;
     center.x = self.center.x;
     self.scrollView.center = center;
+    [self reloadData];
+}
+
+- (void)setClipsToBounds:(BOOL)clipsToBounds {
+    _clipsToBounds = clipsToBounds;
+    self.scrollView.clipsToBounds = clipsToBounds;
+}
+
+- (void)setPagingEnabled:(BOOL)pagingEnabled {
+    _pagingEnabled = pagingEnabled;
+    self.scrollView.pagingEnabled = pagingEnabled;
 }
 
 #pragma mark - lazy load
@@ -202,8 +232,6 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         _scrollView = [[UIScrollView alloc] initWithFrame:self.frame];
         _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _scrollView.delegate = self;
-        _scrollView.clipsToBounds = NO;
-        _scrollView.pagingEnabled = YES;
         _scrollView.showsVerticalScrollIndicator = NO;
         _scrollView.showsHorizontalScrollIndicator = NO;
     }

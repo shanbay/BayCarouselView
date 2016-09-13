@@ -39,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) __nullable id <BayCarouselViewDataSource> dataSource;
 @property (nonatomic, weak) __nullable id <BayCarouselViewDelegate> delegate;
 @property (nonatomic, assign) float rowWidth;
+@property (nonatomic, assign) BOOL clipsToBounds;
+@property (nonatomic, assign) BOOL pagingEnabled;
 
 - (void)reloadData;
 - (UIView *)dequeueReusableView;

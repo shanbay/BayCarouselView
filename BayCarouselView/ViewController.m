@@ -23,11 +23,22 @@
     [view registerClass:[BayCarouselTestItemView class]];
     view.rowWidth = 300;
     view.backgroundColor = [UIColor redColor];
-    [self.view addSubview:view];
     view.delegate = self;
     view.dataSource = self;
-    [view scrollToIndex:1 animate:YES];
+    view.clipsToBounds = NO;
+    view.pagingEnabled = YES;
+    [self.view addSubview:view];
 }
+#pragma mark - BayCarouselViewDelegate
+
+- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+    NSLog(@"willDisplayView %ld", index);
+}
+
+- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+    NSLog(@"didEndDisplayView %ld", index);
+}
+#pragma mark - BayCarouselViewDataSource
 
 - (NSInteger)numberOfRowInCarouselView:(BayCarouselView *)carouselView {
     return 20;
@@ -40,7 +51,6 @@
     view.frame = frame;
     
     view.backgroundColor = [UIColor yellowColor];
-    
     return view;
 }
 
