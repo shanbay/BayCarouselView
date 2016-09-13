@@ -15,11 +15,12 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 
 @property (nonatomic, strong) UIScrollView *scrollView;
 @property (nonatomic, assign) NSInteger numberOfRows;
-@property (nonatomic, strong) NSMutableArray *reusableViewArray;
 @property (nonatomic, strong) NSMutableSet *reusableViewPool;
 @property (nonatomic, strong) Class registerClass;
 @property (nonatomic, assign, getter=isLeftItemLoaded) BOOL leftItemLoaded;
 @property (nonatomic, assign, getter=isRightItemLoaded) BOOL rightItemLoaded;
+@property (nonatomic, assign) NSInteger currentIndex;
+@property (nonatomic, assign) float defaultItemHeight;
 @end
 
 @implementation BayCarouselView
@@ -30,12 +31,12 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
         [self commonInit];
         [self addSubview:self.scrollView];
         self.rowWidth = 320;
+        self.currentIndex = 0;
     }
     return self;
 }
 
 - (void)commonInit {
-    self.reusableViewArray = [NSMutableArray array];
     self.reusableViewPool = [NSMutableSet set];
     self.numberOfRows = 0;
 }
@@ -61,10 +62,22 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
                     [self.delegate carouselView:self didEndDisplayView:view forRowAtIndex:view.itemIndex];
                 }
             }
+            
+            CGFloat viewCenterX = view.center.x;
+            CGFloat centerX = scrollView.contentOffset.x + self.rowWidth / 2;
+            CGFloat scale = (centerX - viewCenterX) / self.rowWidth;
+            if (scale < 0) {
+                scale = scale * -1;
+            }
+            CGRect frame = view.frame;
+            frame.size.height = self.defaultItemHeight - (self.defaultItemHeight * 0.2) * scale;
+            view.frame = frame;
+            CGPoint center = view.center;
+            center.x = (view.itemIndex + 0.5) * self.rowWidth;
+            center.y = self.center.y;
+            view.center = center;
         }
     }
-    
-    
     
     NSArray *subviewsArray = [self.scrollView.subviews sortedArrayUsingComparator:^NSComparisonResult(BayCarouselItemView *obj1, BayCarouselItemView *obj2) {
         
@@ -78,6 +91,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
             break;
         }
     }
+    
     BayCarouselItemView *lastView;
     for (NSInteger j = subviewsArray.count - 1; j >= 0; j--) {
         if ([subviewsArray[j] isKindOfClass:self.registerClass]) {
@@ -85,23 +99,35 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
             break;
         }
     }
+    
 
-    if (CGRectGetMaxX(lastView.frame) < maxX && !self.isRightItemLoaded) {
+    if (lastView && CGRectGetMaxX(lastView.frame) < maxX && !self.isRightItemLoaded) {
+        
         if (lastView.itemIndex + 1 < self.numberOfRows) {
+            self.currentIndex = lastView.itemIndex;
             BayCarouselItemView *view = [self generateViewWithIndex:lastView.itemIndex + 1];
             [self.scrollView addSubview:view];
-            lastView = view;
             self.rightItemLoaded = YES;
+            self.leftItemLoaded = NO;
         }
     }
     
-    if (CGRectGetMinX(firstView.frame) > minX && !self.isLeftItemLoaded) {
+    if (firstView && CGRectGetMinX(firstView.frame) > minX && !self.isLeftItemLoaded) {
+        
         if (firstView.itemIndex > 0) {
+            self.currentIndex = firstView.itemIndex;
             BayCarouselItemView *view = [self generateViewWithIndex:firstView.itemIndex - 1];
             [self.scrollView addSubview:view];
-            firstView = view;
             self.leftItemLoaded = YES;
+            self.rightItemLoaded = NO;
         }
+    }
+    
+    if (!firstView && !lastView) {
+        self.currentIndex = scrollView.contentOffset.x / self.rowWidth;
+        BayCarouselItemView *view = [self generateViewWithIndex:self.currentIndex];
+        [self.scrollView addSubview:view];
+        [self scrollViewDidScroll:scrollView];
     }
 }
 
@@ -123,11 +149,14 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 #endif
     BayCarouselItemView *view = [self.dataSource carouselView:self viewForRowAtIndex:index];
     view.itemIndex = index;
-    CGRect frame = view.frame;
-    float padding = (self.rowWidth - view.frame.size.width) / 2;
-    frame.origin.x = self.rowWidth * view.itemIndex + padding;
-    view.frame = frame;
+    self.defaultItemHeight = view.frame.size.height;
+    if (index != self.currentIndex) {
+        CGRect frame = view.frame;
+        frame.size.height = self.defaultItemHeight * 0.8;
+        view.frame = frame;
+    }
     CGPoint center = view.center;
+    center.x = (view.itemIndex + 0.5) * self.rowWidth;
     center.y = self.center.y;
     view.center = center;
     
@@ -177,6 +206,7 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
 }
 
 - (void)scrollToIndex:(NSInteger)index animate:(BOOL)animate {
+    self.currentIndex = index;
     [self.scrollView setContentOffset:CGPointMake(self.rowWidth * index, 0) animated:animate];
 }
 
@@ -186,10 +216,6 @@ static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier"
     
     if (_delegate != delegate) {
         _delegate = delegate;
-        if (_delegate && _dataSource) {
-            
-            [self setNeedsLayout];
-        }
     }
 }
 

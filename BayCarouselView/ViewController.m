@@ -28,6 +28,7 @@
     view.clipsToBounds = NO;
     view.pagingEnabled = YES;
     [self.view addSubview:view];
+    [view scrollToIndex:12 animate:YES];
 }
 #pragma mark - BayCarouselViewDelegate
 
