@@ -48,6 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIView *)dequeueReusableView;
 - (void)registerClass:(nullable Class)viewClass;
 - (void)scrollToIndex:(NSInteger)index animate:(BOOL)animate;
+- (void)resetData;
 @end
 
 NS_ASSUME_NONNULL_END
