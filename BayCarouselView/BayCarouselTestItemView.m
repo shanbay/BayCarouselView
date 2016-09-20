@@ -40,7 +40,7 @@
     if (!_label) {
         _label = [[UILabel alloc] init];
         _label.font = [UIFont systemFontOfSize:20];
-        _label.textColor = [UIColor grayColor];
+        _label.textColor = HEXCOLOR(0x333333);
         _label.textAlignment = NSTextAlignmentCenter;
     }
     return _label;

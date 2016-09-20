@@ -4,7 +4,7 @@
 
 ### A simple UITableView like carousel view.
 
-![](image01.gif)
+![](https://cdn.pupboss.com/web/www/content/images/2016/09/image01.gif)
 
 ## Usage
 

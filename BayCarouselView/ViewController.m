@@ -22,7 +22,7 @@
     BayCarouselView *view = [[BayCarouselView alloc] initWithFrame:self.view.frame];
     [view registerClass:[BayCarouselTestItemView class]];
     view.rowWidth = 300;
-    view.backgroundColor = [UIColor redColor];
+    view.backgroundColor = HEXCOLOR(0xfdfdfd);
     view.delegate = self;
     view.dataSource = self;
     view.clipsToBounds = NO;
@@ -56,7 +56,7 @@
     view.frame = frame;
     
     view.text = [NSString stringWithFormat:@"当前 index: %ld", index];
-    view.backgroundColor = [UIColor yellowColor];
+    view.backgroundColor = HEXCOLOR(0x209e85);
     return view;
 }
 
