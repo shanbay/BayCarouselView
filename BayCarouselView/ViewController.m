@@ -7,8 +7,10 @@
 //
 
 #import "ViewController.h"
+#import "BayCarouselView.h"
+#import "BayCarouselTestItemView.h"
 
-@interface ViewController ()
+@interface ViewController () <BayCarouselViewDelegate, BayCarouselViewDataSource>
 
 @end
 
@@ -16,12 +18,41 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    BayCarouselView *view = [[BayCarouselView alloc] initWithFrame:self.view.frame];
+    [view registerClass:[BayCarouselTestItemView class]];
+    view.rowWidth = 300;
+    view.backgroundColor = [UIColor redColor];
+    view.delegate = self;
+    view.dataSource = self;
+    view.clipsToBounds = NO;
+    view.pagingEnabled = YES;
+    [self.view addSubview:view];
+    [view scrollToIndex:12 animate:YES];
+}
+#pragma mark - BayCarouselViewDelegate
+
+- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+    NSLog(@"willDisplayView %ld", index);
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+    NSLog(@"didEndDisplayView %ld", index);
+}
+#pragma mark - BayCarouselViewDataSource
+
+- (NSInteger)numberOfRowInCarouselView:(BayCarouselView *)carouselView {
+    return 20;
+}
+
+- (UIView *)carouselView:(BayCarouselView *)carouselView viewForRowAtIndex:(NSInteger)index {
+    UIView *view = [carouselView dequeueReusableView];
+    CGRect frame = view.frame;
+    frame.size = CGSizeMake(280, 527);
+    view.frame = frame;
+    
+    view.backgroundColor = [UIColor yellowColor];
+    return view;
 }
 
 @end
