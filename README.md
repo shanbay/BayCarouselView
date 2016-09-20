@@ -1,10 +1,8 @@
 ## BayCarouselView
 
----
+[![Build Status](https://travis-ci.org/shanbay/BayCarouselView.svg?branch=master)](https://travis-ci.org/shanbay/BayCarouselView) [![GitHub release](https://img.shields.io/github/release/shanbay/BayCarouselView.svg)](https://github.com/shanbay/BayCarouselView/releases) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-```
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-```
+### A simple UITableView like carousel view.
 
 ![](image01.gif)
 
