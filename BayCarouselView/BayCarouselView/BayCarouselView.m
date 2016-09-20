@@ -10,8 +10,8 @@
 #import "BayCarouselItemView.h"
 
 static NSString * const BayCarouselViewIdentifier = @"BayCarouselViewIdentifier";
-static float const BayCarouselDefaultScaleX = 0.9;
-static float const BayCarouselDefaultScaleY = 0.8;
+static CGFloat const BayCarouselDefaultScaleX = 0.9;
+static CGFloat const BayCarouselDefaultScaleY = 0.8;
 
 @interface BayCarouselView() <UIScrollViewDelegate>
 
@@ -19,10 +19,8 @@ static float const BayCarouselDefaultScaleY = 0.8;
 @property (nonatomic, assign) NSInteger numberOfRows;
 @property (nonatomic, strong) NSMutableSet *reusableViewPool;
 @property (nonatomic, strong) Class registerClass;
-@property (nonatomic, assign, getter=isLeftItemLoaded) BOOL leftItemLoaded;
-@property (nonatomic, assign, getter=isRightItemLoaded) BOOL rightItemLoaded;
 @property (nonatomic, assign) NSInteger currentIndex;
-@property (nonatomic, assign) float cardInset;
+@property (nonatomic, assign) CGFloat cardInset;
 @end
 
 @implementation BayCarouselView
@@ -53,6 +51,7 @@ static float const BayCarouselDefaultScaleY = 0.8;
     frame.size.width = self.rowWidth;
     self.scrollView.frame = frame;
     self.scrollView.contentSize = CGSizeMake(self.rowWidth * self.numberOfRows, self.frame.size.height);
+    self.scrollView.contentOffset = CGPointMake(self.rowWidth * self.currentIndex, 0);
     
     CGPoint center = self.scrollView.center;
     center.x = self.center.x;
@@ -71,10 +70,10 @@ static float const BayCarouselDefaultScaleY = 0.8;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
-    float padding = (self.frame.size.width - self.rowWidth) / 2;
+    CGFloat padding = (self.frame.size.width - self.rowWidth) / 2;
     
-    float maxX = scrollView.contentOffset.x + self.scrollView.frame.size.width;
-    float minX = scrollView.contentOffset.x;
+    CGFloat maxX = scrollView.contentOffset.x + self.scrollView.frame.size.width;
+    CGFloat minX = scrollView.contentOffset.x;
     
     for (BayCarouselItemView *view in scrollView.subviews) {
         if ([view isKindOfClass:self.registerClass]) {
@@ -83,7 +82,7 @@ static float const BayCarouselDefaultScaleY = 0.8;
                 if (!view.hidden) {
                     [self queueReusableView:view];
 #ifdef DEBUG
-                    //NSLog(@"remove %ld", view.itemIndex);
+                    //                    NSLog(@"remove %ld", view.itemIndex);
 #endif
                     view.hidden = YES;
                     if ([self.delegate respondsToSelector:@selector(carouselView:didEndDisplayView:forRowAtIndex:)]) {
@@ -135,22 +134,18 @@ static float const BayCarouselDefaultScaleY = 0.8;
     }
     
     // 如果符合条件就生成右边的 view
-    if (lastView && CGRectGetMaxX(lastView.frame) < maxX + padding - self.cardInset && !self.isRightItemLoaded) {
+    if (lastView && CGRectGetMaxX(lastView.frame) < maxX + padding - self.cardInset) {
         
         self.currentIndex = lastView.itemIndex;
-        self.rightItemLoaded = YES;
-        self.leftItemLoaded = NO;
         if (lastView.itemIndex + 1 < self.numberOfRows) {
             [self generateViewWithIndex:lastView.itemIndex + 1];
         }
     }
     
     // 如果符合条件就生成左边的 view
-    if (firstView && CGRectGetMinX(firstView.frame) > minX - padding + self.cardInset && !self.isLeftItemLoaded) {
+    if (firstView && CGRectGetMinX(firstView.frame) > minX - padding + self.cardInset) {
         
         self.currentIndex = firstView.itemIndex;
-        self.leftItemLoaded = YES;
-        self.rightItemLoaded = NO;
         if (firstView.itemIndex > 0) {
             [self generateViewWithIndex:firstView.itemIndex - 1];
         }
@@ -161,11 +156,6 @@ static float const BayCarouselDefaultScaleY = 0.8;
         self.currentIndex = scrollView.contentOffset.x / self.rowWidth;
         [self renderCurrentView];
     }
-}
-
-- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
-    self.leftItemLoaded = NO;
-    self.rightItemLoaded = NO;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -191,6 +181,9 @@ static float const BayCarouselDefaultScaleY = 0.8;
 }
 
 - (BayCarouselItemView *)generateViewWithIndex:(NSInteger)index {
+    if (self.numberOfRows <= index) {
+        return nil;
+    }
 #ifdef DEBUG
     //    NSLog(@"generateViewWithIndex %ld", index);
 #endif
@@ -216,7 +209,10 @@ static float const BayCarouselDefaultScaleY = 0.8;
 #pragma mark - public
 
 - (void)resetData {
-    [self scrollToIndex:0 animate:YES];
+    
+    for (BayCarouselItemView *view in self.scrollView.subviews) {
+        view.hidden = YES;
+    }
 }
 
 - (BayCarouselItemView *)dequeueReusableView {
@@ -246,18 +242,22 @@ static float const BayCarouselDefaultScaleY = 0.8;
         
         self.numberOfRows = [self.dataSource numberOfRowInCarouselView:self];
     }
-    
     self.scrollView.contentSize = CGSizeMake(self.rowWidth * self.numberOfRows, self.frame.size.height);
-    
-    self.currentIndex = 0;
-    
-    // 整个的思路是在屏幕上先加上一个肯定存在的 view，再在 scrollViewDidScroll 里面决定哪些需要删去，哪些需要生成
-    [self renderCurrentView];
+    if (self.scrollView.subviews == 0) {
+        // 整个的思路是在屏幕上先加上一个肯定存在的 view，再在 scrollViewDidScroll 里面决定哪些需要删去，哪些需要生成
+        [self renderCurrentView];
+    }
 }
 
 - (void)scrollToIndex:(NSInteger)index animate:(BOOL)animate {
     self.currentIndex = index;
-    [self.scrollView setContentOffset:CGPointMake(self.rowWidth * index, 0) animated:animate];
+    [self renderCurrentView];
+    
+    if (self.rowWidth * index == self.scrollView.contentOffset.x) {
+        [self.scrollView setContentOffset:CGPointMake(self.rowWidth * index + 1, 0) animated:animate];
+    } else {
+        [self.scrollView setContentOffset:CGPointMake(self.rowWidth * index, 0) animated:animate];
+    }
 }
 
 #pragma mark - set
@@ -279,7 +279,7 @@ static float const BayCarouselDefaultScaleY = 0.8;
     }
 }
 
-- (void)setRowWidth:(float)rowWidth {
+- (void)setRowWidth:(CGFloat)rowWidth {
     _rowWidth = rowWidth;
     CGRect frame = self.scrollView.frame;
     CGPoint center = self.scrollView.center;
