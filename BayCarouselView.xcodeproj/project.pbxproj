@@ -133,6 +133,7 @@
 				TargetAttributes = {
 					71684FA31D86B51C00A1F9F8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = 5B228QDGFG;
 					};
 				};
 			};
@@ -295,6 +296,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5B228QDGFG;
 				INFOPLIST_FILE = BayCarouselView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shanbay.BayCarouselView;
@@ -306,6 +308,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 5B228QDGFG;
 				INFOPLIST_FILE = BayCarouselView/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.shanbay.BayCarouselView;
