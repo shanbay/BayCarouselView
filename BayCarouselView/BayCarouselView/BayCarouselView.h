@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL pagingEnabled;
 
 - (void)reloadData;
-- (UIView *)dequeueReusableView;
+- (__kindof BayCarouselItemView *)dequeueReusableView;
 - (void)registerClass:(nullable Class)viewClass;
 - (void)scrollToIndex:(NSInteger)index animate:(BOOL)animate;
 - (void)resetData;

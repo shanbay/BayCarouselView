@@ -33,11 +33,15 @@
 #pragma mark - BayCarouselViewDelegate
 
 - (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
-    NSLog(@"willDisplayView %ld", index);
+#ifdef DEBUG
+//    NSLog(@"willDisplayView %ld", index);
+#endif
 }
 
 - (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
-    NSLog(@"didEndDisplayView %ld", index);
+#ifdef DEBUG
+//    NSLog(@"didEndDisplayView %ld", index);
+#endif
 }
 #pragma mark - BayCarouselViewDataSource
 
@@ -45,8 +49,8 @@
     return 20;
 }
 
-- (UIView *)carouselView:(BayCarouselView *)carouselView viewForRowAtIndex:(NSInteger)index {
-    UIView *view = [carouselView dequeueReusableView];
+- (BayCarouselItemView *)carouselView:(BayCarouselView *)carouselView viewForRowAtIndex:(NSInteger)index {
+    BayCarouselTestItemView *view = [carouselView dequeueReusableView];
     CGRect frame = view.frame;
     frame.size = CGSizeMake(280, 527);
     view.frame = frame;
