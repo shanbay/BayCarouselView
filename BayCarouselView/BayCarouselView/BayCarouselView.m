@@ -82,7 +82,7 @@ static CGFloat const BayCarouselDefaultScaleY = 0.8;
                 if (!view.hidden) {
                     [self queueReusableView:view];
 #ifdef DEBUG
-                    //                    NSLog(@"remove %ld", view.itemIndex);
+//                    NSLog(@"remove %ld", view.itemIndex);
 #endif
                     view.hidden = YES;
                     if ([self.delegate respondsToSelector:@selector(carouselView:didEndDisplayView:forRowAtIndex:)]) {
@@ -185,7 +185,7 @@ static CGFloat const BayCarouselDefaultScaleY = 0.8;
         return nil;
     }
 #ifdef DEBUG
-    //    NSLog(@"generateViewWithIndex %ld", index);
+//    NSLog(@"generateViewWithIndex %ld", index);
 #endif
     BayCarouselItemView *view = [self.dataSource carouselView:self viewForRowAtIndex:index];
     view.itemIndex = index;

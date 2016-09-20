@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 // Display customization
-- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index;
-- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index;
+- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(BayCarouselItemView *)view forRowAtIndex:(NSInteger)index;
+- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(BayCarouselItemView *)view forRowAtIndex:(NSInteger)index;
 
 - (void)carouselView:(BayCarouselView *)carouselView didSelectRowAtIndex:(NSInteger)index;
 - (void)carouselView:(BayCarouselView *)carouselView didDeSelectRowAtIndex:(NSInteger)index;

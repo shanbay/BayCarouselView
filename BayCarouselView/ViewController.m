@@ -32,13 +32,13 @@
 }
 #pragma mark - BayCarouselViewDelegate
 
-- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+- (void)carouselView:(BayCarouselView *)carouselView willDisplayView:(BayCarouselItemView *)view forRowAtIndex:(NSInteger)index {
 #ifdef DEBUG
 //    NSLog(@"willDisplayView %ld", index);
 #endif
 }
 
-- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(UIView *)view forRowAtIndex:(NSInteger)index {
+- (void)carouselView:(BayCarouselView *)carouselView didEndDisplayView:(BayCarouselItemView *)view forRowAtIndex:(NSInteger)index {
 #ifdef DEBUG
 //    NSLog(@"didEndDisplayView %ld", index);
 #endif
@@ -55,6 +55,7 @@
     frame.size = CGSizeMake(280, 527);
     view.frame = frame;
     
+    view.text = [NSString stringWithFormat:@"当前 index: %ld", index];
     view.backgroundColor = [UIColor yellowColor];
     return view;
 }

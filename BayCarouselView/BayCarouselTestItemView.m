@@ -8,14 +8,41 @@
 
 #import "BayCarouselTestItemView.h"
 
+@interface BayCarouselTestItemView()
+
+@property (nonatomic, strong) UILabel *label;
+@end
+
 @implementation BayCarouselTestItemView
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+- (instancetype)init {
+    if (self = [super init]) {
+        [self addSubview:self.label];
+    }
+    return self;
 }
-*/
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    self.label.frame = self.bounds;
+}
+
+#pragma mark - setter
+
+- (void)setText:(NSString *)text {
+    _text = text;
+    self.label.text = self.text;
+}
+
+#pragma mark - Lazy getter
+
+- (UILabel *)label {
+    if (!_label) {
+        _label = [[UILabel alloc] init];
+        _label.font = [UIFont systemFontOfSize:20];
+        _label.textColor = [UIColor grayColor];
+        _label.textAlignment = NSTextAlignmentCenter;
+    }
+    return _label;
+}
 @end

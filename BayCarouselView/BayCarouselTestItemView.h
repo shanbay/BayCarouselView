@@ -10,4 +10,5 @@
 
 @interface BayCarouselTestItemView : BayCarouselItemView
 
+@property (nonatomic, copy) NSString *text;
 @end
